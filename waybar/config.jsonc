@@ -12,6 +12,7 @@
     "modules-left": ["custom/omarchy", "hyprland/workspaces"],
     "modules-center": ["clock", "mpris", "custom/update", "custom/voxtype", "custom/screenrecording-indicator", "custom/idle-indicator", "custom/notification-silencing-indicator"],
     "modules-right": [
+      "custom/todos",
       "custom/weather",
       "group/tray-expander",
       "custom/bt-battery",
@@ -201,6 +202,15 @@
       "on-click-right": "playerctl next",
       "tooltip-format": "{title} - {artist} ({album})\nClick: play/pause | Right-click: next",
       "tooltip-format-paused": "{title} - {artist} ({album}) [Paused]\nClick: play/pause | Right-click: next"
+    },
+    "custom/todos": {
+      "exec": "~/.config/waybar/scripts/todos.sh",
+      "return-type": "json",
+      "interval": 10,
+      "signal": 11,
+      "on-click": "~/.config/waybar/scripts/todos-toggle.sh",
+      "on-click-right": "omarchy-launch-floating-terminal-with-presentation nvim /home/tsewnai/todos.md",
+      "tooltip": true
     },
     "custom/weather": {
       "exec": "~/.config/waybar/scripts/weather.sh",

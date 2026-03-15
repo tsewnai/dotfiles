@@ -1,0 +1,236 @@
+#!/usr/bin/env bash
+# coros-download.sh — Download all COROS FIT files via the COROS API
+# Dependencies: curl, jq, md5sum
+# Usage: ./coros-download.sh [options]
+#   -u  COROS account email
+#   -p  COROS password (plain text; hashed with MD5 before sending)
+#   -o  Output directory (default: ~/coros-activities)
+#   -s  Start date YYYYMMDD (default: 20100101)
+#   -e  End date   YYYYMMDD (default: today)
+#   -r  Resume: skip files that already exist (default: true)
+#   -h  Show this help
+
+set -euo pipefail
+
+# ── defaults ──────────────────────────────────────────────────────────────────
+# Login endpoint is global; activity endpoints are region-specific.
+# Region IDs seen in the wild: 1 = US/global, 2 = EU
+LOGIN_BASE="https://teameuapi.coros.com"
+declare -A REGION_HOSTS=(
+    [1]="https://teamapi.coros.com"
+    [2]="https://teameuapi.coros.com"
+)
+API_BASE=""   # set after login based on regionId
+OUTPUT_DIR="$HOME/coros-activities"
+START_DATE="20100101"
+END_DATE="$(date +%Y%m%d)"
+RESUME=true
+PAGE_SIZE=30
+COOKIE_JAR="/tmp/coros-cookies-$$.txt"
+
+# ── argument parsing ───────────────────────────────────────────────────────────
+usage() {
+    grep '^#' "$0" | grep -v '#!/' | sed 's/^# \{0,1\}//'
+    exit 0
+}
+
+while getopts ":u:p:o:s:e:rh" opt; do
+    case $opt in
+        u) COROS_EMAIL="$OPTARG" ;;
+        p) COROS_PASSWORD="$OPTARG" ;;
+        o) OUTPUT_DIR="$OPTARG" ;;
+        s) START_DATE="$OPTARG" ;;
+        e) END_DATE="$OPTARG" ;;
+        r) RESUME=false ;;          # -r flag disables resume (re-downloads all)
+        h) usage ;;
+        :) echo "ERROR: option -$OPTARG requires an argument." >&2; exit 1 ;;
+        \?) echo "ERROR: unknown option -$OPTARG." >&2; exit 1 ;;
+    esac
+done
+
+# ── prompt for missing credentials ────────────────────────────────────────────
+if [[ -z "${COROS_EMAIL:-}" ]]; then
+    read -rp "COROS email: " COROS_EMAIL
+fi
+if [[ -z "${COROS_PASSWORD:-}" ]]; then
+    read -rsp "COROS password: " COROS_PASSWORD
+    echo
+fi
+
+# ── helpers ───────────────────────────────────────────────────────────────────
+log()  { echo "[$(date +%H:%M:%S)] $*"; }
+err()  { echo "[$(date +%H:%M:%S)] ERROR: $*" >&2; }
+die()  { err "$*"; exit 1; }
+
+# Check required tools
+for cmd in curl jq md5sum; do
+    command -v "$cmd" &>/dev/null || die "'$cmd' is required but not found. Install it and retry."
+done
+
+# MD5-hash the password (COROS expects lowercase hex, no trailing newline)
+# md5sum outputs "hash  -" so we take only the first field with awk
+md5_password() {
+    # printf avoids the trailing newline that echo adds
+    printf '%s' "$1" | md5sum | awk '{print $1}'
+}
+
+# Wrapper for curl: adds common headers and checks HTTP status
+api_get() {
+    # $1 = full URL, $2 = access token (optional)
+    # -c saves cookies, -b sends saved cookies on every request
+    local url="$1"
+    local token="${2:-}"
+    local args=( -sS --fail-with-body -c "$COOKIE_JAR" -b "$COOKIE_JAR" \
+                  -H "Accept: application/json" \
+                  -H "Content-Type: application/json" \
+                  -H "User-Agent: Mozilla/5.0" )
+    [[ -n "$token" ]] && args+=( -H "accessToken: $token" )
+    curl "${args[@]}" "$url"
+}
+
+api_post() {
+    # $1 = full URL, $2 = JSON body, $3 = access token (optional)
+    local url="$1"
+    local body="$2"
+    local token="${3:-}"
+    local args=( -sS --fail-with-body -X POST -c "$COOKIE_JAR" -b "$COOKIE_JAR" \
+                  -H "Accept: application/json" \
+                  -H "Content-Type: application/json" \
+                  -H "User-Agent: Mozilla/5.0" \
+                  -d "$body" )
+    [[ -n "$token" ]] && args+=( -H "accessToken: $token" )
+    curl "${args[@]}" "$url"
+}
+
+check_result() {
+    # $1 = JSON response, $2 = context label
+    local result
+    result="$(jq -r '.result' <<< "$1")"
+    if [[ "$result" != "0000" ]]; then
+        local msg
+        msg="$(jq -r '.message // "unknown error"' <<< "$1")"
+        die "$2 failed (result=$result): $msg"
+    fi
+}
+
+# ── 1. LOGIN ──────────────────────────────────────────────────────────────────
+log "Logging in as $COROS_EMAIL …"
+
+PWD_HASH="$(md5_password "$COROS_PASSWORD")"
+LOGIN_BODY="$(jq -n \
+    --arg account "$COROS_EMAIL" \
+    --arg pwd    "$PWD_HASH" \
+    '{account: $account, accountType: 2, pwd: $pwd}')"
+
+# jq -n creates JSON from scratch without needing an input file
+# --arg sets a variable that becomes a JSON string (safe against injection)
+
+LOGIN_RESP="$(api_post "$LOGIN_BASE/account/login" "$LOGIN_BODY")"
+check_result "$LOGIN_RESP" "Login"
+
+# jq -r outputs raw strings (no surrounding quotes)
+ACCESS_TOKEN="$(jq -r '.data.accessToken' <<< "$LOGIN_RESP")"
+[[ -z "$ACCESS_TOKEN" || "$ACCESS_TOKEN" == "null" ]] && die "Empty access token in login response."
+
+# Pick the correct regional API host based on the regionId in the login response
+REGION_ID="$(jq -r '.data.regionId // 2' <<< "$LOGIN_RESP")"
+API_BASE="${REGION_HOSTS[$REGION_ID]:-${REGION_HOSTS[2]}}"
+log "Login successful (regionId=$REGION_ID → $API_BASE)"
+
+# ── 2. FETCH ACTIVITY LIST (all pages) ────────────────────────────────────────
+log "Fetching activity list from $START_DATE to $END_DATE …"
+
+ALL_ACTIVITIES=()   # accumulates "date:labelId:sportType" strings
+
+page=1
+total_pages=1       # updated after first response
+
+while [[ $page -le $total_pages ]]; do
+    # Build the query URL with parameters
+    # %s is printf's string placeholder; we use printf to avoid word-splitting
+    URL="$API_BASE/activity/query?size=${PAGE_SIZE}&pageNumber=${page}&startDay=${START_DATE}&endDay=${END_DATE}&modeList="
+    RESP="$(api_get "$URL" "$ACCESS_TOKEN")"
+    check_result "$RESP" "Activity query page $page"
+
+    # On first page, read the total page count so the loop knows when to stop
+    if [[ $page -eq 1 ]]; then
+        total_pages="$(jq -r '.data.totalPage' <<< "$RESP")"
+        count="$(jq -r '.data.count' <<< "$RESP")"
+        log "Total activities: $count  (pages: $total_pages)"
+    fi
+
+    # jq -r iterates the dataList array and emits one "date:labelId:sportType" per line
+    while IFS= read -r entry; do
+        ALL_ACTIVITIES+=("$entry")
+    done < <(jq -r '.data.dataList[]? | "\(.date):\(.labelId):\(.sportType)"' <<< "$RESP")
+
+    log "  Page $page/$total_pages fetched (${#ALL_ACTIVITIES[@]} activities so far)"
+    (( page++ ))
+done
+
+log "Found ${#ALL_ACTIVITIES[@]} activities total."
+
+# ── 3. DOWNLOAD FIT FILES ─────────────────────────────────────────────────────
+mkdir -p "$OUTPUT_DIR"
+log "Saving FIT files to: $OUTPUT_DIR"
+
+downloaded=0
+skipped=0
+failed=0
+
+for entry in "${ALL_ACTIVITIES[@]}"; do
+    # Split the colon-delimited string into three variables using IFS
+    IFS=':' read -r act_date label_id sport_type <<< "$entry"
+
+    filename="${act_date}-${label_id}.fit"
+    dest="$OUTPUT_DIR/$filename"
+
+    if $RESUME && [[ -f "$dest" && -s "$dest" ]]; then
+        # -s checks that the file is non-empty; avoids keeping broken partial downloads
+        log "  SKIP  $filename (already exists)"
+        (( skipped++ ))
+        continue
+    fi
+
+    # Step A: get the download URL from the COROS API
+    DL_URL="$API_BASE/activity/detail/download?labelId=${label_id}&sportType=${sport_type}&fileType=4"
+    DL_RESP="$(api_post "$DL_URL" "{}" "$ACCESS_TOKEN")" || {
+        err "  FAIL  $filename — could not get download URL"
+        (( failed++ ))
+        continue
+    }
+
+    # Check API-level success before extracting the URL
+    result_code="$(jq -r '.result' <<< "$DL_RESP")"
+    if [[ "$result_code" != "0000" ]]; then
+        err "  FAIL  $filename — API result=$result_code: $(jq -r '.message // ""' <<< "$DL_RESP")"
+        (( failed++ ))
+        continue
+    fi
+
+    file_url="$(jq -r '.data.fileUrl // empty' <<< "$DL_RESP")"
+    if [[ -z "$file_url" ]]; then
+        err "  FAIL  $filename — empty fileUrl in response"
+        (( failed++ ))
+        continue
+    fi
+
+    # Step B: download the actual binary FIT file
+    # -L follows redirects, -o writes to file, --silent suppresses progress bar
+    if curl -sSL -o "$dest" "$file_url"; then
+        log "  OK    $filename"
+        (( downloaded++ ))
+    else
+        err "  FAIL  $filename — curl download failed"
+        rm -f "$dest"   # remove partial file so resume can retry it
+        (( failed++ ))
+    fi
+done
+
+# ── 4. SUMMARY ────────────────────────────────────────────────────────────────
+echo
+log "Done."
+log "  Downloaded : $downloaded"
+log "  Skipped    : $skipped  (already existed)"
+log "  Failed     : $failed"
+log "  Output dir : $OUTPUT_DIR"
