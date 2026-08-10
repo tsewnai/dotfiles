@@ -1,29 +1,30 @@
--- Keep only your personal keybinding overrides here. Add new bindings or
--- unbind defaults before replacing them.
+-- Personal keybinding overrides. Omarchy's defaults load first (see
+-- default/hypr/bindings/*.lua), so unbind a default before rebinding its key.
+-- See current bindings: omarchy menu keybindings --print
 
--- See current bindings and descriptions:
---   omarchy menu keybindings --print
+-- Obsidian with Wayland IME + GPU disabled (overrides the plain default).
+hl.unbind("SUPER + SHIFT + O")
+o.bind("SUPER + SHIFT + O", "Obsidian", { launch = "obsidian -disable-gpu --enable-wayland-ime", focus = "^obsidian$" })
 
--- To disable every Omarchy default binding, set this in
--- ~/.config/hypr/hyprland.lua before require("default.hypr.omarchy"), then add
--- only the bindings you want below:
---   omarchy_default_bindings = false
+-- Typora on SUPER+SHIFT+W (default here is Omawrite).
+hl.unbind("SUPER + SHIFT + W")
+o.bind("SUPER + SHIFT + W", "Typora", { launch = "typora --enable-wayland-ime" })
 
--- To disable all preinstalled app/webapp bindings, set:
---   omarchy_preinstalled_bindings = false
+-- Screenshot on SUPER+SHIFT+S for keyboards without a Print key
+-- (default here is the Google Maps web app).
+hl.unbind("SUPER + SHIFT + S")
+o.bind("SUPER + SHIFT + S", "Screenshot with editing", "omarchy capture screenshot region")
 
--- Add a new binding.
--- o.bind("SUPER + SHIFT + R", "SSH", "alacritty -e ssh your-server")
+-- Media controls via playerctl.
+o.bind("SUPER + bracketright", "Next track", "playerctl next")
+o.bind("SUPER + bracketleft", "Pause", "playerctl play-pause")
 
--- Change an existing binding by unbinding it first, then binding the key again.
--- This example changes SUPER+SPACE from the launcher to the Omarchy root menu.
--- hl.unbind("SUPER + SPACE")
--- o.bind("SUPER + SPACE", "Omarchy menu", "omarchy-menu toggle root")
+-- Vim-style window-group navigation (default SUPER+L toggles workspace layout).
+hl.unbind("SUPER + L")
+o.bind("SUPER + H", "Previous window in group", hl.dsp.group.prev())
+o.bind("SUPER + L", "Next window in group", hl.dsp.group.next())
 
--- Disable a default binding without replacing it.
--- hl.unbind("SUPER + SHIFT + B")
-
--- Logitech MX Keys examples:
--- o.bind("SUPER + SHIFT + S", nil, "omarchy-capture-screenshot")
--- o.bind("SUPER + H", nil, "voxtype record toggle")
--- o.bind("SUPER + PERIOD", nil, "omarchy-shell shell toggle omarchy.emojis")
+-- Move window to workspace 2 and place it on that monitor's right half.
+-- Replaces the default plain "move to workspace 2" (bound as code:11).
+hl.unbind("SUPER + SHIFT + code:11")
+o.bind("SUPER + SHIFT + code:11", "Move window to workspace 2 (half)", "/home/tsewnai/.config/hypr/scripts/move-to-ws2-half.sh")
