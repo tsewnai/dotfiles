@@ -3,12 +3,6 @@
 -- Omarchy's bootstrap keeps path setup out of this user config.
 dofile((os.getenv("OMARCHY_PATH") or "/usr/share/omarchy") .. "/default/hypr/bootstrap.lua")
 
--- Hybrid GPU: force Aquamarine to render on the Intel iGPU -- every display is
--- wired to it. Set before loading defaults so it lands ahead of GPU init.
--- NVIDIA vars (NVD_BACKEND/LIBVA_DRIVER_NAME/__GLX_VENDOR_LIBRARY_NAME) are
--- already handled by Omarchy's default nvidia.lua, so they're not repeated here.
-hl.env("AQ_DRM_DEVICES", "/dev/dri/by-path/pci-0000:00:02.0-card")
-
 -- Disable all Omarchy default bindings. Add your own in hypr/bindings.lua.
 -- omarchy_default_bindings = false
 --

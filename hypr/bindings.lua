@@ -15,6 +15,12 @@ o.bind("SUPER + SHIFT + W", "Typora", { launch = "typora --enable-wayland-ime" }
 hl.unbind("SUPER + SHIFT + S")
 o.bind("SUPER + SHIFT + S", "Screenshot with editing", "omarchy capture screenshot region")
 
+-- Fresh, independent tmux session each time (default runs `tmux attach ||
+-- tmux new -s Work`, which double-attaches to the most-recent session and
+-- mirrors it).
+hl.unbind("SUPER + ALT + RETURN")
+o.bind("SUPER + ALT + RETURN", "Tmux", "omarchy-launch-terminal bash -c 'tmux new'")
+
 -- Media controls via playerctl.
 o.bind("SUPER + bracketright", "Next track", "playerctl next")
 o.bind("SUPER + bracketleft", "Pause", "playerctl play-pause")

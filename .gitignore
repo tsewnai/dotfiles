@@ -1,2 +1,9 @@
 *.bak
 *.bak.*
+
+# Local backup dirs created before migrations (kept on disk, not in git)
+backup-*/
+
+# Written by omarchy itself into ~/.config/omarchy, which symlinks here
+omarchy/defaults/
+omarchy/hooks/post-update.d/

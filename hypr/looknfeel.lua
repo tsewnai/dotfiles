@@ -6,4 +6,9 @@ hl.config({
     -- Asymmetric outer gaps: top/bottom 5, left/right 10.
     gaps_out = { top = 5, right = 10, bottom = 5, left = 10 },
   },
+
+  decoration = {
+    rounding = 10,
+    rounding_power = 3,
+  },
 })
