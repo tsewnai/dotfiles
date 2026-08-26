@@ -44,4 +44,16 @@ fi
 ln -s "$STARSHIP_SOURCE" "$STARSHIP_TARGET"
 echo "Linked $STARSHIP_TARGET -> $STARSHIP_SOURCE"
 
+# Reinstall third-party shell plugins listed in omarchy/plugins.txt.
+# They are git clones, gitignored here, so a fresh checkout has none.
+PLUGIN_MANIFEST="$REPO_DIR/omarchy/plugins.txt"
+
+if [ -f "$PLUGIN_MANIFEST" ] && command -v omarchy >/dev/null; then
+    while read -r url; do
+        case "$url" in ''|\#*) continue ;; esac
+        echo "Installing plugin $url"
+        omarchy plugin add "$url" --enable --yes
+    done < "$PLUGIN_MANIFEST"
+fi
+
 echo "Done! All configs symlinked."

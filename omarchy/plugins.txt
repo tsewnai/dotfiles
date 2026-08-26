@@ -1,0 +1,9 @@
+# Third-party Omarchy shell plugins, replayed by install.sh.
+# Add one with: omarchy plugin add <url> --enable, then append it here.
+# Update all with: omarchy plugin update
+https://github.com/bobby-nicholas/omaland.git
+https://github.com/crmne/omarchy-hyprmoncfg.git
+https://github.com/robzolkos/omarchy-github.git
+https://github.com/SirJul1337/omarchy-lock-explorer.git
+https://github.com/stappmus/Omarchy-Spotify.git
+https://github.com/thisisgm/omarchy-pods

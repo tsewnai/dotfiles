@@ -27,3 +27,12 @@ require("default.hypr.toggles")
 
 -- Add any other personal Hyprland configuration below.
 -- o.window("qemu", { workspace = "5" })
+
+-- Optimized for retina-class 2x displays.
+hl.env("GDK_SCALE", "2")
+
+
+require("hypr.workspace1")
+
+-- Added by hyprmoncfg: its generated monitor rules load last, so nothing before this can override the applied layout.
+dofile(os.getenv("HOME") .. "/.config/hypr/hyprmoncfg-monitors.lua")

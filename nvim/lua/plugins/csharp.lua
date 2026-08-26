@@ -26,6 +26,9 @@ return {
     opts = {
       servers = {
         omnisharp = { enabled = false },
+        -- lspconfig auto-enables this because mason has roslyn installed; it duplicates
+        -- roslyn.nvim's client -- two servers per nvim, each with its own watches and heap.
+        roslyn_ls = { enabled = false },
       },
     },
   },

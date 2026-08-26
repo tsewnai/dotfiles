@@ -21,6 +21,10 @@ o.bind("SUPER + SHIFT + S", "Screenshot with editing", "omarchy capture screensh
 hl.unbind("SUPER + ALT + RETURN")
 o.bind("SUPER + ALT + RETURN", "Tmux", "omarchy-launch-terminal bash -c 'tmux new'")
 
+-- Bind Omarchy Spotify
+hl.unbind("SUPER + SHIFT + M") -- previously: Music
+o.bind("SUPER + SHIFT + M", "Omarchy Spotify", "omarchy shell -q quickshell.spotify.player togglePlayer")
+
 -- Media controls via playerctl.
 o.bind("SUPER + bracketright", "Next track", "playerctl next")
 o.bind("SUPER + bracketleft", "Pause", "playerctl play-pause")
@@ -33,4 +37,8 @@ o.bind("SUPER + L", "Next window in group", hl.dsp.group.next())
 -- Move window to workspace 2 and place it on that monitor's right half.
 -- Replaces the default plain "move to workspace 2" (bound as code:11).
 hl.unbind("SUPER + SHIFT + code:11")
-o.bind("SUPER + SHIFT + code:11", "Move window to workspace 2 (half)", "/home/tsewnai/.config/hypr/scripts/move-to-ws2-half.sh")
+o.bind(
+	"SUPER + SHIFT + code:11",
+	"Move window to workspace 2 (half)",
+	"/home/tsewnai/.config/hypr/scripts/move-to-ws2-half.sh"
+)

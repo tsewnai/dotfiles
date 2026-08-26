@@ -22,7 +22,18 @@
           "id": "omarchy.indicators"
         },
         {
-          "id": "omarchy.media"
+          "id": "quickshell.spotify",
+          "deviceName": "Omarchy Spotify",
+          "idleShutdownMinutes": 15,
+          "showMiniPlayer": "On",
+          "shortcutPlayer": "Mini player",
+          "showTrackTitle": "On",
+          "showArtistName": "On",
+          "scrollBarText": "On",
+          "scrollSpeed": "1",
+          "audioQuality": "320 kbps",
+          "searchHistory": "[]",
+          "sessionState": "{\"tab\":\"discover\",\"searchText\":\"\",\"searchType\":\"track\",\"libraryType\":\"tracks\",\"homeType\":\"recent\",\"libraryFilter\":\"\",\"librarySort\":\"default\",\"playlistFilter\":\"\",\"playlistSort\":\"default\",\"detailFilter\":\"\",\"detailSort\":\"default\",\"homeFilter\":\"\",\"discoverFilter\":\"\",\"queueFilter\":\"\",\"artistSearchText\":\"\",\"scrollPositions\":{\"home:recent\":0,\"search:track\":0,\"playlist:\":0,\"discover\":0,\"detail:spotify:playlist:37i9dQZF1E39IQFXm4UEOC\":0,\"detail:spotify:playlist:37i9dQZF1E35BDnkT9bH2G\":0,\"detail:spotify:playlist:37i9dQZEVXbpn0ucbp155C\":0,\"playlist:2wTlxSVSkXoCrHhjb542hu\":0,\"detail:spotify:playlist:37i9dQZF1E3aj4aUmRECZL\":0,\"detail:spotify:playlist:37i9dQZF1E36bsuZTK7sps\":326,\"detail:spotify:artist:5Pb27ujIyYb33zBqVysBkj\":0,\"detail:spotify:playlist:37i9dQZF1E36uj4Ev0hHTa\":0,\"detail:spotify:playlist:37i9dQZF1E37LNIjTuiMs4\":0},\"detailItem\":null,\"selectedPlaylistId\":\"2wTlxSVSkXoCrHhjb542hu\",\"lastRadioPlaylist\":null}"
         },
         {
           "id": "omarchy.clock",
@@ -37,12 +48,22 @@
           "id": "omarchy.weather"
         },
         {
+          "id": "io.github.thisisgm.omapods",
+          "hideWhenDisconnected": false
+        },
+        {
+          "id": "robzolkos.github"
+        },
+        {
           "id": "omarchy.system-update"
         }
       ],
       "right": [
         {
           "id": "omarchy.tray"
+        },
+        {
+          "id": "crmne.hyprmoncfg"
         },
         {
           "id": "omarchy.agents"
@@ -65,5 +86,20 @@
       ]
     }
   },
-  "plugins": []
+  "plugins": [
+    {
+      "id": "io.github.sirjul1337.lock-explorer",
+      "design": "my-poster",
+      "inputMonitor": "DP-6"
+    },
+    {
+      "id": "bobbynicholas.omaland"
+    }
+  ],
+  "disabledPlugins": [
+    "omarchy.lock"
+  ],
+  "cloneSourceRestores": [
+    "io.github.sirjul1337.lock-explorer"
+  ]
 }

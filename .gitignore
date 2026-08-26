@@ -7,3 +7,7 @@ backup-*/
 # Written by omarchy itself into ~/.config/omarchy, which symlinks here
 omarchy/defaults/
 omarchy/hooks/post-update.d/
+
+# Third-party shell plugins are git clones managed by `omarchy plugin`.
+# Tracked as URLs in omarchy/plugins.txt and replayed by install.sh.
+omarchy/plugins/
