@@ -31,8 +31,10 @@ require("default.hypr.toggles")
 -- Optimized for retina-class 2x displays.
 hl.env("GDK_SCALE", "2")
 
+hl.env("LIBVA_DRIVER_NAME", "iHD")
 
-require("hypr.workspace1")
+-- Workspace rules load last so they win over hyprmoncfg's generated ones.
+require("hypr.workspaces")
 
 -- Added by hyprmoncfg: its generated monitor rules load last, so nothing before this can override the applied layout.
 dofile(os.getenv("HOME") .. "/.config/hypr/hyprmoncfg-monitors.lua")

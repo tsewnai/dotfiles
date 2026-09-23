@@ -12,3 +12,5 @@ vim.keymap.set("n", "<F11>",  function() require("dap").step_into() end,        
 vim.keymap.set("n", "<F12>",  function() require("dap").step_out() end,          { desc = "Debug: Step out" })
 vim.keymap.set("n", "<D-c>", '"+yy', { desc = "Copy line to clipboard" })
 vim.keymap.set("v", "<D-c>", '"+y',  { desc = "Copy selection to clipboard" })
+
+vim.keymap.set("n", "<leader>gm", function() Snacks.picker.git_diff({ base = "origin/main" }) end, { desc = "Git diff vs origin/main" })

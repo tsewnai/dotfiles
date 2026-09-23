@@ -20,16 +20,6 @@ hl.monitor({ output = "desc:Acer Technologies K272HL H 12110194E3W01", mode = "1
 -- Fallback for any unrecognized monitor (e.g. projector, new display).
 -- hl.monitor({ output = "", mode = "preferred", position = "auto", scale = "auto" })
 
--- Workspace assignments.
--- Rules for disconnected outputs are ignored, so home and work coexist:
--- at home only 1 (laptop) and 3 (Acer) bind; 2 and 4 fall back to the laptop.
---
--- While hyprmoncfg is installed these are mostly inert: hyprmoncfg-monitors.lua
--- loads later and replaces the rules for 1-4 (5 has no hyprmoncfg equivalent),
--- then hypr/workspace1.lua replaces 1 again. Kept so this file still stands on
--- its own if hyprmoncfg is ever removed.
-hl.workspace_rule({ workspace = "1", monitor = "eDP-1", default = true })
-hl.workspace_rule({ workspace = "2", monitor = "desc:Ancor Communications Inc ASUS PB278 J1LMTF116908", default = true })
-hl.workspace_rule({ workspace = "3", monitor = "desc:Ancor Communications Inc ASUS PB278 J9LMTF050838", default = true })
-hl.workspace_rule({ workspace = "4", monitor = "desc:Dell Inc. DELL P2219H GVY67W2", default = true })
-hl.workspace_rule({ workspace = "5", monitor = "desc:Acer Technologies K272HL H 12110194E3W01", default = true })
+-- Workspace rules live in hypr/workspaces.lua, which is required after
+-- hyprmoncfg's generated rules so it can override them. Geometry stays here:
+-- it is the baseline for any layout hyprmoncfg has no profile for (e.g. home).

@@ -11,3 +11,6 @@ vim.opt.scrolloff = 8
 -- instead of the nearest package.json/LSP root (e.g. a vite subdirectory).
 -- LSP root detection is unaffected — each LSP still uses its own root_dir logic.
 vim.g.root_spec = { ".git", "lsp", "cwd" }
+
+-- Ignore .editorconfig end_of_line: git (text=auto) owns line endings, and a forced CRLF buffer makes gitsigns flag every line.
+require("editorconfig").properties.end_of_line = function() end

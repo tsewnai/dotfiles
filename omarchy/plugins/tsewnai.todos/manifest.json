@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "id": "tsewnai.todos",
+  "name": "Todos",
+  "version": "1.0.0",
+  "author": "tsewnai",
+  "description": "Markdown checklist todos in the bar: pending count, popup to add, check off, and delete.",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "Todos.qml"
+  },
+  "barWidget": {
+    "displayName": "Todos",
+    "description": "Pending count in the bar; popup lists the open items in a markdown checklist file.",
+    "category": "Productivity",
+    "allowMultiple": false,
+    "defaultSection": "right",
+    "defaults": {
+      "file": "~/Documents/vault/todos.md",
+      "editor": "nvim"
+    },
+    "schema": [
+      {
+        "key": "file",
+        "type": "path",
+        "label": "Todo file",
+        "description": "Markdown file with `- [ ]` and `- [x]` lines. Everything else in the file is left untouched.",
+        "defaultValue": "~/Documents/vault/todos.md"
+      },
+      {
+        "key": "editor",
+        "type": "string",
+        "label": "Editor",
+        "description": "Opened on the file in a floating terminal on right-click or `e`.",
+        "defaultValue": "nvim"
+      }
+    ]
+  }
+}

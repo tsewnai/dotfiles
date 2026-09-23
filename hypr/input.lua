@@ -7,3 +7,9 @@ hl.config({
     repeat_delay = 600,
   },
 })
+
+-- MX Master 3S wheel scrolls too fast at libinput's default rate.
+hl.device({
+  name = "logitech-usb-receiver-mouse",
+  scroll_factor = 0.6,
+})

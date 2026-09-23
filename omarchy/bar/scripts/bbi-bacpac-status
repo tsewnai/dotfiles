@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+# Bar status for the daily BBI bacpac export. Prints nothing when idle so the
+# widget collapses; otherwise Waybar-style JSON with phase and % of last run.
+set -uo pipefail
+
+state="${BBI_STATUS_STATE:-$(systemctl --user is-active waas-export-bacpac.service 2>/dev/null)}"
+[[ "$state" == "activating" || "$state" == "active" ]] || exit 0
+
+dir="$HOME/backups/waas"
+# Look only inside the service's cgroup so unrelated shells never match.
+cg="${BBI_STATUS_CG:-$(systemctl --user show waas-export-bacpac.service -p ControlGroup --value 2>/dev/null)}"
+procs="$(cat "/sys/fs/cgroup${cg}/cgroup.procs" 2>/dev/null)"
+comm_of() { cat "/proc/$1/comm" 2>/dev/null; }
+pid=""; exporter=""
+for p in $procs; do
+  case "$(comm_of "$p")" in
+    sqlpackage) pid="$p" ;;
+    bash) tr '\0' ' ' < "/proc/$p/cmdline" | grep -q 'waas-export-bacpac --dr' && exporter="$p" ;;
+  esac
+done
+
+human() { numfmt --to=iec --suffix=B --format='%.2f' "$1"; }
+mins()  { printf '%dm' $(( $1 / 60 )); }
+
+if [[ -z "$pid" ]]; then
+  if [[ -n "$exporter" ]]; then
+    if journalctl --user -u waas-export-bacpac.service --since "-12h" -o cat 2>/dev/null | grep -q '^Done:'; then
+      phase="dropping copy"
+    else
+      phase="copying db"
+    fi
+    printf '{"text":"󰆼 bacpac: %s","tooltip":"BBI bacpac export\\n%s","class":"active"}\n' "$phase" "$phase"
+  else
+    printf '{"text":"󰆼 bacpac: waiting","tooltip":"BBI bacpac export\\nawaiting approval (click the notification)","class":"active"}\n'
+  fi
+  exit 0
+fi
+
+# /TargetFile:<path> is the only field we want from the cmdline; the rest holds the password.
+out="$(tr '\0' '\n' < "/proc/$pid/cmdline" | sed -n 's|^/TargetFile:||p')"
+size=0; [[ -f "$out" ]] && size="$(stat -c %s "$out")"
+ref="$(ls -t "$dir"/bbi-*.bacpac 2>/dev/null | grep -vxF "$out" | head -1)"
+refsize=0; [[ -n "$ref" ]] && refsize="$(stat -c %s "$ref")"
+elapsed="$(ps -o etimes= -p "$pid" | tr -d ' ')"
+
+pct=""; eta=""
+if (( refsize > 0 )); then
+  pct=$(( size * 100 / refsize )); (( pct > 99 )) && pct=99
+  if (( size > 0 && elapsed > 0 && refsize > size )); then
+    eta="$(mins $(( (refsize - size) * elapsed / size )))"
+  fi
+fi
+
+text="󰆼 bacpac ${pct:+$pct%}"
+tip="BBI bacpac export\\nexporting $(basename "$out")\\n$(human "$size")${ref:+ / $(human "$refsize") last run}\\nelapsed $(mins "$elapsed")${eta:+, ~$eta left}"
+printf '{"text":"%s","tooltip":"%s","class":"active"}\n' "$text" "$tip"

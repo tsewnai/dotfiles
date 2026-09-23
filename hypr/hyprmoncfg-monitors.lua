@@ -32,8 +32,3 @@ hl.monitor({
   output = "desc:Samsung Display Corp. 0x414D",
   disabled = true,
 })
-
-hl.workspace_rule({ workspace = "1", monitor = "desc:Ancor Communications Inc ASUS PB278 J1LMTF116908", default = true })
-hl.workspace_rule({ workspace = "2", monitor = "desc:Ancor Communications Inc ASUS PB278 J1LMTF116908", default = true })
-hl.workspace_rule({ workspace = "3", monitor = "desc:Ancor Communications Inc ASUS PB278 J9LMTF050838", default = true })
-hl.workspace_rule({ workspace = "4", monitor = "desc:Dell Inc. DELL P2219H GVY67W2", default = true })

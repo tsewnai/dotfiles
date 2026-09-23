@@ -1,0 +1,47 @@
+-- All workspace-to-monitor rules live here.
+--
+-- Loaded LAST, after hyprmoncfg's generated rules, so these always win.
+-- The split is deliberate: hyprmoncfg owns monitor geometry, this file owns
+-- workspace placement. hyprmoncfg re-homes workspaces off an output it has
+-- disabled (it rewrote ws1 away from the laptop panel on a clamshell event),
+-- which leaves the panel unclaimed at boot -- it then grabs the first free
+-- workspace id, 6, and autostart windows pile up there.
+
+local LAPTOP = "eDP-1"
+local LAPTOP_FALLBACK = "DP-5"
+
+local LEFT = "desc:Ancor Communications Inc ASUS PB278 J1LMTF116908"
+local CENTER = "desc:Ancor Communications Inc ASUS PB278 J9LMTF050838"
+local PORTRAIT = "desc:Dell Inc. DELL P2219H GVY67W2"
+local HOME = "desc:Acer Technologies K272HL H 12110194E3W01"
+
+local function apply()
+  -- A disabled monitor is dropped from the monitor list, so a nil lookup means "off".
+  local laptop = hl.get_monitor(LAPTOP) and LAPTOP or LAPTOP_FALLBACK
+
+  -- Every output that can be connected owns a workspace, so none is ever left
+  -- to claim a free id on its own. Rules naming an absent monitor are ignored,
+  -- so the docked set (1-4) and the home set (1, 5) coexist in one file.
+  hl.workspace_rule({ workspace = "1", monitor = laptop, default = true })
+  hl.workspace_rule({ workspace = "2", monitor = LEFT, default = true })
+  hl.workspace_rule({ workspace = "3", monitor = CENTER, default = true })
+  hl.workspace_rule({ workspace = "4", monitor = PORTRAIT, default = true })
+  hl.workspace_rule({ workspace = "5", monitor = HOME, default = true })
+
+  if hl.get_monitor(laptop) then
+    hl.dispatch(hl.dsp.workspace.move({ workspace = "1", monitor = laptop }))
+  end
+end
+
+-- monitor.removed fires before the monitor leaves the list, so re-check on the next tick.
+local function apply_soon()
+  hl.timer(apply, { timeout = 250, type = "oneshot" })
+end
+
+apply()
+
+-- Re-assert on every layout change: hyprmoncfg rewrites its rules at runtime,
+-- not only at config load, so a one-shot apply() at startup is not enough.
+hl.on("monitor.added", apply_soon)
+hl.on("monitor.removed", apply_soon)
+hl.on("monitor.layout_changed", apply_soon)
