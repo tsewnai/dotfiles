@@ -87,7 +87,8 @@
       ]
     },
     "position": "top",
-    "transparent": false
+    "transparent": false,
+    "id": "tsewnai.bar"
   },
   "cloneSourceRestores": [
     "io.github.sirjul1337.lock-explorer"

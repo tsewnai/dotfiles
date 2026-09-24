@@ -13,3 +13,4 @@ omarchy/hooks/post-update.d/
 omarchy/plugins/*
 # Hand-written plugins that live only in this repo stay tracked.
 !omarchy/plugins/tsewnai.todos/
+!omarchy/plugins/tsewnai.bar/
