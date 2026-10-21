@@ -1,6 +1,6 @@
 #!/usr/bin/bash
-# Move active window to workspace 2 and place it on the right half of whichever
-# monitor workspace 2 currently lives on (looked up dynamically, not hardcoded).
+# Move active window to workspace slot 2 of the focused monitor and place it on
+# that monitor's right half.
 
 set -u
 
@@ -17,14 +17,15 @@ WIN="address:$WIN_ADDR"
 
 # Float before moving so resize/move work reliably.
 dsp "hl.dsp.window.float({ window = \"$WIN\", action = \"on\" })"
-dsp "hl.dsp.window.move({ window = \"$WIN\", workspace = \"2\" })"
+# Omarchy numbers workspaces per monitor (blocks of 10), so global id 2 is slot 2
+# of the first monitor only; o.workspaces maps the slot onto the focused one.
+dsp "o.workspaces.move_window(2)"
 
-# Find which monitor workspace 2 is on, then read that monitor's geometry.
-MON_NAME=$(hyprctl workspaces -j | jq -r '.[] | select(.id == 2) | .monitor')
-MON=$(hyprctl monitors -j | jq --arg n "$MON_NAME" '.[] | select(.name == $n)')
+MON_ID=$(hyprctl clients -j | jq --arg a "$WIN_ADDR" '.[] | select(.address == $a) | .monitor')
+MON=$(hyprctl monitors -j | jq --argjson id "${MON_ID:-null}" '.[] | select(.id == $id)')
 
 if [ -z "$MON" ]; then
-    echo "move-to-ws2-half: could not resolve monitor for workspace 2" >&2
+    echo "move-to-ws2-half: could not resolve monitor for window" >&2
     exit 1
 fi
 

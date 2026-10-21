@@ -25,10 +25,12 @@ o.bind("SUPER + ALT + RETURN", "Tmux", "omarchy-launch-terminal bash -c 'tmux ne
 o.bind("SUPER + bracketright", "Next track", "playerctl next")
 o.bind("SUPER + bracketleft", "Pause", "playerctl play-pause")
 
--- Vim-style window-group navigation (default SUPER+L toggles workspace layout).
+-- Vim-style workspace and window-group navigation (default SUPER+L toggles workspace layout).
 hl.unbind("SUPER + L")
-o.bind("SUPER + H", "Previous window in group", hl.dsp.group.prev())
-o.bind("SUPER + L", "Next window in group", hl.dsp.group.next())
+o.bind("SUPER + H", "Previous workspace", hl.dsp.focus({ workspace = "m-1" }))
+o.bind("SUPER + L", "Next workspace", hl.dsp.focus({ workspace = "m+1" }))
+o.bind("SUPER + SHIFT + H", "Previous window in group", hl.dsp.group.prev())
+o.bind("SUPER + SHIFT + L", "Next window in group", hl.dsp.group.next())
 
 -- Move window to workspace 2 and place it on that monitor's right half.
 -- Replaces the default plain "move to workspace 2" (bound as code:11).
