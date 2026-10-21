@@ -7,27 +7,38 @@
           "id": "omarchy.indicators"
         },
         {
-          "id": "quickshell.spotify",
-          "deviceName": "Omarchy Spotify",
-          "idleShutdownMinutes": 15,
-          "showMiniPlayer": "On",
-          "shortcutPlayer": "Mini player",
-          "showTrackTitle": "On",
-          "showArtistName": "On",
-          "scrollBarText": "On",
-          "scrollSpeed": "1",
-          "audioQuality": "320 kbps",
-          "searchHistory": "[]",
-          "sessionState": "{\"tab\":\"detail\",\"searchText\":\"\",\"searchType\":\"track\",\"libraryType\":\"tracks\",\"homeType\":\"recent\",\"libraryFilter\":\"\",\"librarySort\":\"default\",\"playlistFilter\":\"\",\"playlistSort\":\"default\",\"detailFilter\":\"\",\"detailSort\":\"default\",\"homeFilter\":\"\",\"discoverFilter\":\"\",\"queueFilter\":\"\",\"artistSearchText\":\"\",\"scrollPositions\":{\"home:recent\":0,\"search:track\":0,\"playlist:\":0,\"discover\":0,\"detail:spotify:playlist:37i9dQZF1E39IQFXm4UEOC\":0,\"detail:spotify:playlist:37i9dQZF1E35BDnkT9bH2G\":0,\"detail:spotify:playlist:37i9dQZEVXbpn0ucbp155C\":0,\"playlist:2wTlxSVSkXoCrHhjb542hu\":0,\"detail:spotify:playlist:37i9dQZF1E3aj4aUmRECZL\":0,\"detail:spotify:playlist:37i9dQZF1E36bsuZTK7sps\":0,\"detail:spotify:artist:5Pb27ujIyYb33zBqVysBkj\":0,\"detail:spotify:playlist:37i9dQZF1E36uj4Ev0hHTa\":0,\"detail:spotify:playlist:37i9dQZF1E37LNIjTuiMs4\":0,\"detail:spotify:playlist:37i9dQZF1EP6YuccBxUcC1\":0,\"playlist:37i9dQZF1EP6YuccBxUcC1\":0},\"detailItem\":{\"kind\":\"context\",\"type\":\"playlist\",\"id\":\"37i9dQZF1E36uj4Ev0hHTa\",\"uri\":\"spotify:playlist:37i9dQZF1E36uj4Ev0hHTa\",\"name\":\"Daily Mix 3\",\"subtitle\":\"Spotify\",\"description\":\"The Story So Far, Knuckle Puck, Paramore and more\",\"artists\":[],\"imageUrl\":\"https://pickasso.spotifycdn.com/image/ab67c0de0000deef/dt/v1/img/daily/3/ab6761610000e5eb4d8d055d82fc1e5b1c5ecb1d/en\",\"total\":50,\"releaseType\":\"\",\"releaseDate\":\"\",\"ownerId\":\"spotify\",\"ownerName\":\"Spotify\",\"collaborative\":false,\"public\":true,\"snapshotId\":\"AAAAAMkRCc0GU2LdQDrN3SMNQndFi7KF\",\"addedAt\":\"\",\"externalUrl\":\"https://open.spotify.com/playlist/37i9dQZF1E36uj4Ev0hHTa\"},\"selectedPlaylistId\":\"37i9dQZF1EP6YuccBxUcC1\",\"lastRadioPlaylist\":null}"
+          "id": "omarchy.media"
         },
         {
           "id": "omarchy.clock",
-          "format": "ddd d MMM HH:mm",
+          "format": "HH:mm",
           "formatAlt": "d MMMM 'W'ww yyyy",
           "verticalFormat": "HH\n—\nmm"
         },
         {
-          "id": "omarchy.keyboard-layout"
+          "id": "omarchy.elsewhen",
+          "cities": [
+            {
+              "name": "New York",
+              "zone": "America/New_York"
+            },
+            {
+              "name": "London",
+              "zone": "Europe/London"
+            },
+            {
+              "name": "Dubai",
+              "zone": "Asia/Dubai"
+            },
+            {
+              "name": "Tokyo",
+              "zone": "Asia/Tokyo"
+            },
+            {
+              "name": "Los Angeles",
+              "zone": "America/Los_Angeles"
+            }
+          ]
         },
         {
           "id": "omarchy.weather"
@@ -50,6 +61,9 @@
       ],
       "right": [
         {
+          "id": "omarchy.keyboard-layout"
+        },
+        {
           "id": "tsewnai.todos"
         },
         {
@@ -62,6 +76,9 @@
         },
         {
           "id": "omarchy.tray"
+        },
+        {
+          "id": "io.github.elevate08.qs-bitwarden-cli"
         },
         {
           "id": "crmne.hyprmoncfg"
@@ -104,7 +121,8 @@
     {
       "design": "my-poster",
       "id": "io.github.sirjul1337.lock-explorer",
-      "inputMonitor": "DP-6"
+      "inputMonitor": "DP-6",
+      "blankMs": 60000
     },
     {
       "id": "bobbynicholas.omaland"

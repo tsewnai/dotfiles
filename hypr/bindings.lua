@@ -21,10 +21,6 @@ o.bind("SUPER + SHIFT + S", "Screenshot with editing", "omarchy capture screensh
 hl.unbind("SUPER + ALT + RETURN")
 o.bind("SUPER + ALT + RETURN", "Tmux", "omarchy-launch-terminal bash -c 'tmux new'")
 
--- Bind Omarchy Spotify
-hl.unbind("SUPER + SHIFT + M") -- previously: Music
-o.bind("SUPER + SHIFT + M", "Omarchy Spotify", "omarchy shell -q quickshell.spotify.player togglePlayer")
-
 -- Media controls via playerctl.
 o.bind("SUPER + bracketright", "Next track", "playerctl next")
 o.bind("SUPER + bracketleft", "Pause", "playerctl play-pause")
@@ -42,3 +38,14 @@ o.bind(
 	"Move window to workspace 2 (half)",
 	"/home/tsewnai/.config/hypr/scripts/move-to-ws2-half.sh"
 )
+
+-- flea --default: begin. Written by `flea --default`; `flea --default off` removes the block whole.
+hl.unbind("SUPER + SHIFT + F")
+o.bind("SUPER + SHIFT + F", "File manager", { launch = 'flea --gui' })
+hl.unbind("SUPER + ALT + SHIFT + F")
+o.bind("SUPER + ALT + SHIFT + F", "File manager (cwd)", { launch = 'flea --gui "$(omarchy-cmd-terminal-cwd)"' })
+-- flea --default: end.
+
+-- flea --picker: begin. Written by `flea --picker`; `flea --picker off` removes the block whole.
+o.window("com.thisisgm.flea.picker", { tag = "+floating-window" })
+-- flea --picker: end.

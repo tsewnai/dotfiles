@@ -14,3 +14,4 @@ omarchy/plugins/*
 # Hand-written plugins that live only in this repo stay tracked.
 !omarchy/plugins/tsewnai.todos/
 !omarchy/plugins/tsewnai.bar/
+!omarchy/plugins/tsewnai.lock/

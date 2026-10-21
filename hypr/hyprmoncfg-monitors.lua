@@ -5,6 +5,7 @@ hl.monitor({
   mode = "2560x1440@59.95",
   position = "-2560x0",
   scale = 1,
+  vrr = 0,
   sdr_min_luminance = 0.2,
   sdr_max_luminance = 80,
 })
@@ -14,6 +15,7 @@ hl.monitor({
   mode = "2560x1440@59.95",
   position = "0x0",
   scale = 1,
+  vrr = 0,
   sdr_min_luminance = 0.2,
   sdr_max_luminance = 80,
 })
@@ -24,6 +26,7 @@ hl.monitor({
   position = "2560x-177",
   scale = 1,
   transform = 3,
+  vrr = 0,
   sdr_min_luminance = 0.2,
   sdr_max_luminance = 80,
 })

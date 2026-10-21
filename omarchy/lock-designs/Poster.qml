@@ -3,6 +3,7 @@
 import QtQuick
 import QtQuick.Effects
 import qs.Commons
+import qs.Commons as Commons
 import "../plugins/io.github.sirjul1337.lock-explorer/designs"
 
 DesignBase {
@@ -34,7 +35,7 @@ DesignBase {
       Text {
         anchors.right: parent.right
         text: Qt.formatTime(lock.now, "HH")
-        color: Color.lock.text
+        color: Commons.Color.lock.text
         font.family: Style.font.family
         font.pixelSize: lock.bigSize
         font.weight: Font.Black
@@ -45,7 +46,7 @@ DesignBase {
       Text {
         anchors.right: parent.right
         text: Qt.formatTime(lock.now, "mm")
-        color: Color.lock.borderActive
+        color: Commons.Color.lock.borderActive
         font.family: Style.font.family
         font.pixelSize: lock.bigSize
         font.weight: Font.Black
@@ -58,7 +59,7 @@ DesignBase {
     Text {
       anchors.right: parent.right
       text: Qt.formatDate(lock.now, "dddd").toUpperCase()
-      color: Color.lock.text
+      color: Commons.Color.lock.text
       font.family: Style.font.family
       font.pixelSize: Style.font.heading
       font.letterSpacing: 6
@@ -66,7 +67,7 @@ DesignBase {
     Text {
       anchors.right: parent.right
       text: Qt.formatDate(lock.now, "d MMMM yyyy").toUpperCase()
-      color: lock.withAlpha(Color.lock.text, 0.7)
+      color: lock.withAlpha(Commons.Color.lock.text, 0.7)
       font.family: Style.font.family
       font.pixelSize: Style.font.body
       font.letterSpacing: 4
@@ -92,14 +93,14 @@ DesignBase {
         anchors.verticalCenter: parent.verticalCenter
         Text {
           text: lock.userName
-          color: Color.lock.text
+          color: Commons.Color.lock.text
           font.family: Style.font.family
           font.pixelSize: Style.font.title
           font.weight: Font.DemiBold
         }
         Text {
           text: lock.errorState ? lock.failureMessage : (lock.authenticatingPassword ? "Checking…" : lock.hostName)
-          color: lock.errorState ? Color.lock.textError : lock.withAlpha(Color.lock.text, 0.6)
+          color: lock.errorState ? Commons.Color.lock.textError : lock.withAlpha(Commons.Color.lock.text, 0.6)
           font.family: Style.font.family
           font.pixelSize: Style.font.bodySmall
         }
@@ -113,7 +114,7 @@ DesignBase {
       height: 52
       textAlignment: TextInput.AlignLeft
       placeholder: "Password"
-      color: lock.withAlpha(Color.lock.background, 0.7)
+      color: lock.withAlpha(Commons.Color.lock.background, 0.7)
     }
   }
 }
