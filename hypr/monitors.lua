@@ -24,6 +24,10 @@ hl.monitor({ output = "desc:Acer Technologies K272HL H 12110194E3W01", mode = "1
 -- Fallback for any unrecognized monitor (e.g. projector, new display).
 -- hl.monitor({ output = "", mode = "preferred", position = "auto", scale = "auto" })
 
--- Workspace rules live in hypr/workspaces.lua, which is required after
--- hyprmoncfg's generated rules so it can override them. Geometry stays here:
--- it is the baseline for any layout hyprmoncfg has no profile for (e.g. home).
+-- Workspace placement belongs to Omarchy's per-monitor workspaces. hyprmoncfg
+-- owns geometry only: its workspace management is off at the source
+-- (workspaces.enabled = false in ~/.config/hyprmoncfg/profiles/profile-1.json),
+-- because hyprmoncfgd dispatches moveworkspacetomonitor at runtime. Do not
+-- re-save the profile with `hyprmoncfg save` or the TUI without re-checking that
+-- flag. Geometry stays here: it is the baseline for any layout hyprmoncfg has no
+-- profile for (e.g. home).
